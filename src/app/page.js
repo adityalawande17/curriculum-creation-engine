@@ -7,6 +7,7 @@ import { CurriculumProvider } from "@/lib/CurriculumContext";
 import { LEVELS } from "@/lib/levels";
 import { Node } from "@/components/Node";
 import { CurriculumHeader } from "@/components/CurriculumHeader";
+import { EmptyState } from "@/components/EmptyState";
 import { Toast } from "@/components/Toast";
 
 export default function Home() {
@@ -55,9 +56,13 @@ export default function Home() {
     <CurriculumProvider value={contextValue}>
       <main className="mx-auto max-w-3xl px-6 py-12">
         <CurriculumHeader />
-        {curriculum.root.childIds.map((moduleId) => (
-          <Node key={moduleId} id={moduleId} />
-        ))}
+        {curriculum.root.childIds.length === 0 ? (
+          <EmptyState />
+        ) : (
+          curriculum.root.childIds.map((moduleId, index) => (
+            <Node key={moduleId} id={moduleId} number={String(index + 1)} />
+          ))
+        )}
       </main>
       <Toast toast={toast} onUndo={curriculum.undo} onDismiss={() => setToast(null)} />
     </CurriculumProvider>

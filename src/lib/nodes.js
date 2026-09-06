@@ -56,9 +56,30 @@ export function createInitialState() {
   return {
     rootId: root.id,
     nodes: { [root.id]: root },
-    collapsed: new Set(),
+    collapsed: autoCollapseModules(root.childIds),
     history: [],
   };
+}
+
+const AUTO_COLLAPSE_MODULE_THRESHOLD = 5;
+
+/**
+ * A curriculum with more than ~5 modules starts collapsed so the page is
+ * legible on first load (CLAUDE.md push-back #4) — only modules, not
+ * topics, so expanding one module immediately shows its full topic list
+ * rather than requiring a second round of clicking.
+ *
+ * A freshly created curriculum always has zero modules, so this is a
+ * no-op for createInitialState(). It matters for whatever loads a large
+ * tree in one shot — the seed data now, and eventually REPLACE_TREE
+ * when AI import lands in Phase 7-9.
+ * @param {string[]} moduleIds
+ */
+export function autoCollapseModules(moduleIds) {
+  if (moduleIds.length <= AUTO_COLLAPSE_MODULE_THRESHOLD) {
+    return new Set();
+  }
+  return new Set(moduleIds);
 }
 
 /**

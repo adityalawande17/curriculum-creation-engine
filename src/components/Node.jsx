@@ -22,7 +22,7 @@ function formatSummary(counts) {
   return parts.join(" · ") || "empty";
 }
 
-export function Node({ id }) {
+export function Node({ id, number }) {
   const {
     getNode,
     updateField,
@@ -41,19 +41,30 @@ export function Node({ id }) {
   // complete literal strings for Tailwind to generate CSS for them — it
   // scans source text, it doesn't run this code — so each branch spells
   // its own name out in full rather than building one with `node.type`.
+  // chipClassName follows the spec examples literally: "MODULE 1" is
+  // uppercase, but "Topic 1.2" and "Lesson 1.2.3" are not.
   let containerClassName;
   let deleteHoverClassName;
+  let chipClassName;
+  let titleClassName = "";
   if (node.type === "module") {
     containerClassName =
       "group/module my-2 bg-white border border-neutral-200 rounded-xl shadow-sm border-l-[3px] border-l-(--brand) p-4";
     deleteHoverClassName = "opacity-0 group-hover/module:opacity-100";
+    chipClassName =
+      "text-xs font-semibold uppercase tracking-wide text-neutral-500";
+    titleClassName = "text-[17px] font-semibold";
   } else if (node.type === "topic") {
     containerClassName =
       "group/topic my-2 bg-neutral-50/60 rounded-lg border-l-2 border-l-neutral-300 p-3";
     deleteHoverClassName = "opacity-0 group-hover/topic:opacity-100";
+    chipClassName = "text-xs font-medium text-neutral-500";
+    titleClassName = "text-[15px] font-medium";
   } else {
     containerClassName = "group/lesson my-2";
     deleteHoverClassName = "opacity-0 group-hover/lesson:opacity-100";
+    chipClassName = "text-xs text-neutral-400";
+    titleClassName = "text-[14px]";
   }
 
   return (
@@ -75,10 +86,15 @@ export function Node({ id }) {
           </button>
         )}
 
-        <div className="text-xs uppercase text-neutral-400">{level.label}</div>
+        <div className={chipClassName}>
+          {level.label} {number}
+        </div>
 
         {canDelete && (
-          <button className={deleteHoverClassName} onClick={() => onDeleteNode(node)}>
+          <button
+            className={deleteHoverClassName}
+            onClick={() => onDeleteNode(node)}
+          >
             <Trash2 size={16} />
           </button>
         )}
@@ -90,7 +106,7 @@ export function Node({ id }) {
         placeholder={`Untitled ${level.label}`}
         variant="title"
         autoFocus={node.id === lastCreatedId}
-        className="font-semibold"
+        className={titleClassName}
       />
       <EditableText
         value={node.description}
@@ -105,12 +121,26 @@ export function Node({ id }) {
           {formatSummary(countDescendantsByType(state.nodes, node.id))}
         </div>
       ) : (
-        <>
-          {node.childIds.map((childId) => (
-            <Node key={childId} id={childId} />
-          ))}
-          <AddButton node={node} />
-        </>
+        // Guide line: a left border on the whole children group, so
+        // there's a visible spine connecting this node to what's under
+        // it — this is what makes deep nesting readable instead of just
+        // indentation alone. Skipped entirely for lessons (canCollapse
+        // false), since they have neither children nor an Add button.
+        canCollapse && (
+          <div className="ml-1 border-l border-neutral-200 pl-3">
+            {node.childIds.length === 0 && (
+              <div className="text-xs text-neutral-400">No {level.child}s yet</div>
+            )}
+            {node.childIds.map((childId, index) => (
+              <Node
+                key={childId}
+                id={childId}
+                number={`${number}.${index + 1}`}
+              />
+            ))}
+            <AddButton node={node} />
+          </div>
+        )
       )}
     </div>
   );

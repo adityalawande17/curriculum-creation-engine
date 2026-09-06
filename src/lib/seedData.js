@@ -1,3 +1,5 @@
+import { autoCollapseModules } from "./nodes";
+
 /**
  * TEMPORARY — Phase 3 checkpoint only, so the recursive Node component
  * has something real to render before Add/Delete exist (Phase 5).
@@ -52,5 +54,10 @@ export function createSeedState() {
     },
   };
 
-  return { rootId: "root", nodes, collapsed: new Set(), history: [] };
+  return {
+    rootId: "root",
+    nodes,
+    collapsed: autoCollapseModules(nodes.root.childIds),
+    history: [],
+  };
 }

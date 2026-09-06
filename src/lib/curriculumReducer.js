@@ -1,5 +1,5 @@
 import { LEVELS } from "./levels";
-import { createNode, collectDescendants } from "./nodes";
+import { createNode, collectDescendants, autoCollapseModules } from "./nodes";
 
 /**
  * The only function in the app that knows how to turn "what happened"
@@ -97,10 +97,15 @@ export function curriculumReducer(state, action) {
 
     case "REPLACE_TREE": {
       const snapshot = { rootId: state.rootId, nodes: state.nodes };
+      const newRoot = action.nodes[action.rootId];
       return {
         ...state,
         rootId: action.rootId,
         nodes: action.nodes,
+        // Deliberately not `...state.collapsed` — a full replace means
+        // the old collapsed ids belong to a tree that no longer exists.
+        // Recompute fresh instead of silently carrying stale state over.
+        collapsed: autoCollapseModules(newRoot.childIds),
         history: [...state.history, snapshot],
       };
     }
