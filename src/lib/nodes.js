@@ -89,16 +89,32 @@ export function collectDescendants(nodes, id) {
   return result;
 }
 
-/**
- * Counts nodes by type, for the header stats (modules/topics/lessons).
- * @param {Record<string, Node>} nodes
- */
-export function countByType(nodes) {
+function countTypes(nodes, ids) {
   const counts = { modules: 0, topics: 0, lessons: 0 };
-  for (const node of Object.values(nodes)) {
+  for (const id of ids) {
+    const node = nodes[id];
     if (node.type === "module") counts.modules++;
     if (node.type === "topic") counts.topics++;
     if (node.type === "lesson") counts.lessons++;
   }
   return counts;
+}
+
+/**
+ * Counts nodes by type across the whole tree, for the header stats.
+ * @param {Record<string, Node>} nodes
+ */
+export function countByType(nodes) {
+  return countTypes(nodes, Object.keys(nodes));
+}
+
+/**
+ * Counts nodes by type within one node's subtree only (not including the
+ * node itself) — for a collapsed row's summary, e.g. "4 topics · 11 lessons".
+ * @param {Record<string, Node>} nodes
+ * @param {string} id
+ */
+export function countDescendantsByType(nodes, id) {
+  const descendantIds = collectDescendants(nodes, id).filter((d) => d !== id);
+  return countTypes(nodes, descendantIds);
 }

@@ -1,7 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  /* Slightly off-white, not pure white — white module cards need a
+     visibly different page background to actually read as "cards"
+     rather than blending into the page. */
+  --background: #fafaf9;
   --foreground: #171717;
   --brand: #ec8601;
   --brand-soft: #fef3e2;
@@ -14,12 +17,11 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* No dark-mode block here on purpose: CLAUDE.md §10 defines one
+   deliberate light design, and none of our Tailwind classes elsewhere
+   have dark: variants. An OS-driven dark-mode switch here would flip
+   text to near-white while cards stayed light-colored — unreadable,
+   and not something we designed for. */
 
 body {
   background: var(--background);

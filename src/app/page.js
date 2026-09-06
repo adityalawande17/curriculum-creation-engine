@@ -6,6 +6,7 @@ import { createSeedState } from "@/lib/seedData"; // TEMPORARY — see Phase 3
 import { CurriculumProvider } from "@/lib/CurriculumContext";
 import { LEVELS } from "@/lib/levels";
 import { Node } from "@/components/Node";
+import { CurriculumHeader } from "@/components/CurriculumHeader";
 import { Toast } from "@/components/Toast";
 
 export default function Home() {
@@ -53,7 +54,10 @@ export default function Home() {
   return (
     <CurriculumProvider value={contextValue}>
       <main className="mx-auto max-w-3xl px-6 py-12">
-        <Node id={curriculum.root.id} />
+        <CurriculumHeader />
+        {curriculum.root.childIds.map((moduleId) => (
+          <Node key={moduleId} id={moduleId} />
+        ))}
       </main>
       <Toast toast={toast} onUndo={curriculum.undo} onDismiss={() => setToast(null)} />
     </CurriculumProvider>
