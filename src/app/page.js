@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useCurriculum } from "@/lib/useCurriculum";
-import { createSeedState } from "@/lib/seedData"; // TEMPORARY — see Phase 3
 import { CurriculumProvider } from "@/lib/CurriculumContext";
 import { LEVELS } from "@/lib/levels";
 import { runWithConcurrencyLimit } from "@/lib/concurrency";
@@ -12,7 +11,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { Toast } from "@/components/Toast";
 
 export default function Home() {
-  const curriculum = useCurriculum(createSeedState);
+  const curriculum = useCurriculum();
   const [lastCreatedId, setLastCreatedId] = useState(null);
   const [toast, setToast] = useState(null);
   const [generatingModuleIds, setGeneratingModuleIds] = useState(new Set());
