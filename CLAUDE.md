@@ -493,9 +493,15 @@ This gives us three things at once:
 3. **Graceful degradation** — if module 14's lesson call fails, modules 1–13 and 15–20
    are fine. We show a tiny "retry" on module 14. One failure ≠ whole feature broken.
 
-Because these calls are small and narrow, set `output_config: { effort: "low" }` on
-them — lower latency and cost, and lesson-naming genuinely doesn't need deep reasoning.
-Pass 1 (the structural judgement call) stays at default effort.
+Because these calls are small and narrow, Pass 2 uses **`claude-sonnet-5`** instead of
+Opus, with `output_config: { effort: "low" }` on top of that — lower latency and cost on
+two axes at once, and lesson-naming genuinely doesn't need deep reasoning or the
+top-tier model. Pass 1 (the structural judgement call — deciding `structured` vs
+`partial` vs `none`, inferring missing topics, writing a useful `reasoning` sentence)
+stays on `claude-opus-5` at default effort, since that's the one call in the whole
+pipeline making real judgment calls on potentially messy input, and it's also the first
+thing the user sees — a wrong verdict there is maximally visible and everything
+downstream builds on it.
 
 ### 8.5 Prompt design — what actually goes in `prompts.js`
 
@@ -841,7 +847,8 @@ editing, no difference between AI and manual content.
    title/description, and the full topic list, so lessons are coherent *across* the
    module rather than each topic being generated blind.
 3. `app/api/generate-lessons/route.js` — same shape as Pass 1 but text-only input (no
-   PDF re-send — that would be wasteful and slow), `output_config: { effort: "low" }`.
+   PDF re-send — that would be wasteful and slow), model `claude-sonnet-5`,
+   `output_config: { effort: "low" }`.
 4. Client: after Replace/Add, fire one call per module with a concurrency limit of 4.
    Dispatch `ATTACH_LESSONS` as each returns.
 5. Per-module state: a subtle shimmer or "generating lessons…" line while in flight; a
@@ -1055,7 +1062,7 @@ Update this as you go — it becomes your video notes.
 | 4 Inline editing | ⬜ | | |
 | 5 Add/delete/undo | ⬜ | | |
 | 6 Hierarchy polish | ⬜ | | |
-| 7 AI outline route | ⬜ | | |
+| 7 AI outline route | ✅ | 2026-09-06 | Tested all 3 detected cases with real PDFs generated via pandoc/LaTeX (no scanner needed). Zod v4 works fine with zodOutputFormat — worried for nothing. The "none" case reasoning is genuinely good: it named the exact company and invoice number and explained why it's not a curriculum, not just "not a curriculum." Good video moment for §8.6. |
 | 8 Upload UI + review | ⬜ | | |
 | 9 Lesson fan-out | ⬜ | | |
 | 10 Edge cases | ⬜ | | |
