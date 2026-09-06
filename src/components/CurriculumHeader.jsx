@@ -2,12 +2,17 @@
 
 import { useCurriculumContext } from "@/lib/CurriculumContext";
 import { EditableText } from "./EditableText";
+import { UploadDialog } from "./UploadDialog";
 
 export function CurriculumHeader() {
   const { root, updateField, stats, collapseAll } = useCurriculumContext();
 
   return (
     <header className="mb-8">
+      <div className="mb-2 flex justify-end">
+        <UploadDialog />
+      </div>
+
       <EditableText
         value={root.title}
         onChange={(value) => updateField(root.id, "title", value)}

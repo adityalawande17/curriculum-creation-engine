@@ -139,3 +139,12 @@ export function countDescendantsByType(nodes, id) {
   const descendantIds = collectDescendants(nodes, id).filter((d) => d !== id);
   return countTypes(nodes, descendantIds);
 }
+
+/**
+ * How many nodes the AI invented rather than found in the document — the
+ * count shown in the review panel's "N items were inferred" note (§4.7).
+ * @param {Record<string, Node>} nodes
+ */
+export function countInferred(nodes) {
+  return Object.values(nodes).filter((node) => node.origin === "ai-inferred").length;
+}
