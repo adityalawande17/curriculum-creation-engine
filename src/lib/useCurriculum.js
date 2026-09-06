@@ -2,7 +2,7 @@
 
 import { useReducer } from "react";
 import { curriculumReducer } from "./curriculumReducer";
-import { createInitialState, countByType } from "./nodes";
+import { createInitialState, countByType, newId } from "./nodes";
 
 /**
  * The only door into curriculum state. Components call the named
@@ -26,7 +26,14 @@ export function useCurriculum(init = createInitialState) {
     updateField: (id, field, value) =>
       dispatch({ type: "UPDATE_FIELD", id, field, value }),
 
-    addChild: (parentId) => dispatch({ type: "ADD_CHILD", parentId }),
+    // Returns the new node's id so the caller (page.js) can track "this
+    // is the one that should autoFocus" — the reducer never hands
+    // anything back, since dispatch's return value is always ignored.
+    addChild: (parentId) => {
+      const id = newId();
+      dispatch({ type: "ADD_CHILD", parentId, id });
+      return id;
+    },
 
     deleteNode: (id) => dispatch({ type: "DELETE_NODE", id }),
 

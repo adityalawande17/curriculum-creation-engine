@@ -21,12 +21,15 @@ export function curriculumReducer(state, action) {
     }
 
     case "ADD_CHILD": {
-      const { parentId } = action;
+      const { parentId, id } = action;
       const parent = state.nodes[parentId];
       const childType = LEVELS[parent.type].child;
       if (!childType) return state; // lessons have no child type
 
-      const child = createNode(childType, parentId);
+      // id comes from the caller (useCurriculum's addChild wrapper) instead
+      // of being generated in here, so the caller knows the new id right
+      // away — needed to autoFocus the node the instant it's created.
+      const child = createNode(childType, parentId, { id });
 
       return {
         ...state,
