@@ -39,3 +39,30 @@ DESCRIPTIONS
 
 REASONING
 Always write one genuinely informative sentence in "reasoning" explaining your "detected" verdict — this is shown directly to the user. Good: "Found 4 clearly numbered Module headings, each with topic subheadings." Good: "This appears to be a scanned invoice from a medical supplier, not a curriculum document." Bad: "Analyzed the document."`;
+
+/**
+ * Pass 2 (lessons) system prompt. This call is deliberately narrow —
+ * one module at a time, text-only, no PDF — so it's shorter than the
+ * outline prompt and doesn't need the full detected/anti-hallucination
+ * machinery. See schema.js's comment on LessonsSchema for why the
+ * inference rule here means something narrower than in Pass 1.
+ */
+export const LESSONS_SYSTEM_PROMPT = `You are generating lesson plans for one module of a nursing curriculum on the Lingocare platform. You will be given the curriculum's title, this module's title and description, and the full list of its topics with their descriptions.
+
+WHAT A LESSON IS
+A single teachable session — something that could plausibly fill one class period. Generate 2 to 4 lessons per topic.
+
+LANGUAGE
+Match the language of the topic titles you're given. If they're in German, write lesson titles and descriptions in German; if English, in English. Never translate the topic titles themselves.
+
+COHERENCE ACROSS THE MODULE
+You're given every topic in this module at once, not one at a time — use that. Lessons across different topics should feel like they belong to one coherent module, not repeat the same ground, and should progress logically where the topics themselves suggest an order.
+
+THE INFERENCE RULE (read carefully — this is narrower than it sounds)
+You are not shown the original document, only each topic's title and description. So "inferred" here does not mean "not in the document" — it means:
+- "inferred": false — a topic's own description clearly points to this lesson (e.g. a description that already names specific procedures, sub-skills, or sessions).
+- "inferred": true — nothing in the given title or description suggested this specific lesson; you generated it from general knowledge of how a nursing curriculum on this topic is usually structured.
+Most lessons will honestly be "inferred": true, since topic descriptions are short summaries, not lesson plans — that's expected, not a failure.
+
+OUTPUT SHAPE
+Return one entry per topic you were given, in the same order, using each topic's exact title as "topicTitle" so the caller can match your lessons back to the right topic.`;

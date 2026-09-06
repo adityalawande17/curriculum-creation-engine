@@ -30,12 +30,17 @@ export function Node({ id, number }) {
     onDeleteNode,
     state,
     toggleCollapse,
+    generatingModuleIds,
+    failedModuleIds,
+    onRetryLessons,
   } = useCurriculumContext();
   const node = getNode(id);
   const level = LEVELS[node.type];
   const canDelete = node.parentId !== null; // the curriculum root can't be deleted
   const canCollapse = level.child !== null; // lessons have no children to hide
   const isCollapsed = canCollapse && state.collapsed.has(node.id);
+  const isGeneratingLessons = node.type === "module" && generatingModuleIds.has(node.id);
+  const lessonsFailed = node.type === "module" && failedModuleIds.has(node.id);
   // Each level gets its own *named* group (group/module, group/topic,
   // group/lesson) instead of one shared name. Names must appear as
   // complete literal strings for Tailwind to generate CSS for them — it
@@ -115,6 +120,20 @@ export function Node({ id, number }) {
         variant="description"
         className="text-sm text-neutral-500"
       />
+
+      {isGeneratingLessons && (
+        <div className="mt-1 animate-pulse text-xs text-neutral-400">
+          Generating lessons…
+        </div>
+      )}
+      {lessonsFailed && (
+        <button
+          className="mt-1 text-xs text-red-500 underline"
+          onClick={() => onRetryLessons(node.id)}
+        >
+          Couldn&apos;t generate lessons — Retry
+        </button>
+      )}
 
       {isCollapsed ? (
         <div className="mt-1 text-xs text-neutral-400">

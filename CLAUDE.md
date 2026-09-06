@@ -1064,7 +1064,7 @@ Update this as you go — it becomes your video notes.
 | 6 Hierarchy polish | ⬜ | | |
 | 7 AI outline route | ✅ | 2026-09-06 | Tested all 3 detected cases with real PDFs generated via pandoc/LaTeX (no scanner needed). Zod v4 works fine with zodOutputFormat — worried for nothing. The "none" case reasoning is genuinely good: it named the exact company and invoice number and explained why it's not a curriculum, not just "not a curriculum." Good video moment for §8.6. |
 | 8 Upload UI + review | ✅ | 2026-09-06 | Full end-to-end verified by hand in the browser: upload -> staged loading text -> review panel with correct counts -> Replace -> AI-generated titles immediately editable, same as manual nodes. No automated browser tooling available in this environment (chromium-cli missing, didn't want to add a whole Playwright toolchain just for one check) — verified everything checkable via curl/code myself, handed the real click-through to Aditya, same pattern as every other interactive phase. |
-| 9 Lesson fan-out | ⬜ | | |
+| 9 Lesson fan-out | ✅ | 2026-09-07 | Concurrency-limit logic unit-tested at zero cost before touching the real API. Real bug hunt: lessons didn't appear on first browser test — added temp debug logging, but the actual fix was just restarting the dev server. Root cause: stale Fast Refresh state after many live edits to a page.js with lots of interlocking closures across this whole phase. Good reminder that "restart the dev server" is a real debugging step, not a cop-out — and a good one to try before assuming the code itself is wrong. |
 | 10 Edge cases | ⬜ | | |
 | 11 Deploy | ⬜ | | |
 | 12 Video | ⬜ | | |

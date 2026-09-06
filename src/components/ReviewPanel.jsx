@@ -9,7 +9,7 @@ import { countByType, countInferred } from "@/lib/nodes";
  * aiToNodes.js — ready to hand straight to replaceTree/mergeTree.
  */
 export function ReviewPanel({ outline, tree, onDismiss, onRetry }) {
-  const { replaceTree, mergeTree, root } = useCurriculumContext();
+  const { replaceTree, mergeTree, root, onGenerateLessons } = useCurriculumContext();
 
   if (outline.detected === "none") {
     return (
@@ -39,11 +39,13 @@ export function ReviewPanel({ outline, tree, onDismiss, onRetry }) {
 
   function handleReplace() {
     replaceTree(tree);
+    onGenerateLessons(tree);
     onDismiss();
   }
 
   function handleAdd() {
     mergeTree(tree.nodes, root.id);
+    onGenerateLessons(tree);
     onDismiss();
   }
 
