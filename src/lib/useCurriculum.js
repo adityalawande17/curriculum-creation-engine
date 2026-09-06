@@ -9,9 +9,12 @@ import { createInitialState, countByType } from "./nodes";
  * functions below (addChild, deleteNode, ...) and never see `dispatch`
  * or an action object — that keeps every component ignorant of what a
  * Node looks like internally, which is the whole point of D3.
+ *
+ * `init` defaults to the real starting state (one empty root) but can be
+ * swapped — e.g. for the Phase 3 seed data — without touching this file.
  */
-export function useCurriculum() {
-  const [state, dispatch] = useReducer(curriculumReducer, undefined, createInitialState);
+export function useCurriculum(init = createInitialState) {
+  const [state, dispatch] = useReducer(curriculumReducer, undefined, init);
 
   const root = state.nodes[state.rootId];
 
