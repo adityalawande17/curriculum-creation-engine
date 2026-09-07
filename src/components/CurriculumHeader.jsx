@@ -2,15 +2,21 @@
 
 import { useCurriculumContext } from "@/lib/CurriculumContext";
 import { EditableText } from "./EditableText";
-import { UploadDialog } from "./UploadDialog";
+import { Upload } from "lucide-react";
 
 export function CurriculumHeader() {
-  const { root, updateField, stats, collapseAll } = useCurriculumContext();
+  const { root, updateField, stats, collapseAll, onOpenUpload } = useCurriculumContext();
 
   return (
     <header className="mb-8">
       <div className="mb-2 flex justify-end">
-        <UploadDialog />
+        <button
+          className="flex items-center gap-1.5 rounded-md bg-(--brand) px-3 py-1.5 text-sm font-semibold text-white"
+          onClick={onOpenUpload}
+        >
+          <Upload size={14} />
+          Upload Curriculum
+        </button>
       </div>
 
       <EditableText

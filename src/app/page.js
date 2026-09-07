@@ -9,12 +9,14 @@ import { Node } from "@/components/Node";
 import { CurriculumHeader } from "@/components/CurriculumHeader";
 import { EmptyState } from "@/components/EmptyState";
 import { AddButton } from "@/components/AddButton";
+import { UploadDialog } from "@/components/UploadDialog";
 import { Toast } from "@/components/Toast";
 
 export default function Home() {
   const curriculum = useCurriculum();
   const [lastCreatedId, setLastCreatedId] = useState(null);
   const [toast, setToast] = useState(null);
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [generatingModuleIds, setGeneratingModuleIds] = useState(new Set());
   // Keyed by module id -> everything retryModule() needs to try again,
   // since the module may no longer be reachable from current state by
@@ -132,6 +134,7 @@ export default function Home() {
     failedModuleIds: new Set(Object.keys(failedModules)),
     onGenerateLessons: generateLessonsForTree,
     onRetryLessons: retryModule,
+    onOpenUpload: () => setIsUploadOpen(true),
   };
 
   return (
@@ -150,6 +153,7 @@ export default function Home() {
         )}
       </main>
       <Toast toast={toast} onUndo={curriculum.undo} onDismiss={() => setToast(null)} />
+      <UploadDialog isOpen={isUploadOpen} onClose={() => setIsUploadOpen(false)} />
     </CurriculumProvider>
   );
 }

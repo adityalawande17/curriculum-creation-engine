@@ -5,6 +5,13 @@ import { Upload, X } from "lucide-react";
 import { aiOutlineToTree } from "@/lib/aiToNodes";
 import { ReviewPanel } from "./ReviewPanel";
 
+// `isOpen` and `onClose` are owned by page.js, not this component — the
+// trigger button lives in two different places (CurriculumHeader and
+// EmptyState) that both need to open the exact same dialog, so "is it
+// open" can't be private state in here anymore. Everything else
+// (upload stage, drag state, errors) stays local, since only this
+// component ever needs it.
+
 const MAX_FILE_BYTES = 32 * 1024 * 1024;
 
 // Advances on a timer, not on real server checkpoints — Pass 1 is one
@@ -24,8 +31,7 @@ function validateFile(file) {
   return null;
 }
 
-export function UploadDialog() {
-  const [isOpen, setIsOpen] = useState(false);
+export function UploadDialog({ isOpen, onClose }) {
   const [stage, setStage] = useState("idle"); // idle | reading | identifying | structuring | reviewing | error
   const [errorMessage, setErrorMessage] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -40,7 +46,7 @@ export function UploadDialog() {
   }
 
   function close() {
-    setIsOpen(false);
+    onClose();
     reset();
   }
 
@@ -97,14 +103,6 @@ export function UploadDialog() {
 
   return (
     <>
-      <button
-        className="flex items-center gap-1.5 rounded-md bg-(--brand) px-3 py-1.5 text-sm font-semibold text-white"
-        onClick={() => setIsOpen(true)}
-      >
-        <Upload size={14} />
-        Upload Curriculum
-      </button>
-
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4">
           <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-lg">
