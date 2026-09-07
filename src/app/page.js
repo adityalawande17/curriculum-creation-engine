@@ -8,6 +8,7 @@ import { runWithConcurrencyLimit } from "@/lib/concurrency";
 import { Node } from "@/components/Node";
 import { CurriculumHeader } from "@/components/CurriculumHeader";
 import { EmptyState } from "@/components/EmptyState";
+import { AddButton } from "@/components/AddButton";
 import { Toast } from "@/components/Toast";
 
 export default function Home() {
@@ -140,9 +141,12 @@ export default function Home() {
         {curriculum.root.childIds.length === 0 ? (
           <EmptyState />
         ) : (
-          curriculum.root.childIds.map((moduleId, index) => (
-            <Node key={moduleId} id={moduleId} number={String(index + 1)} />
-          ))
+          <>
+            {curriculum.root.childIds.map((moduleId, index) => (
+              <Node key={moduleId} id={moduleId} number={String(index + 1)} />
+            ))}
+            <AddButton node={curriculum.root} />
+          </>
         )}
       </main>
       <Toast toast={toast} onUndo={curriculum.undo} onDismiss={() => setToast(null)} />
